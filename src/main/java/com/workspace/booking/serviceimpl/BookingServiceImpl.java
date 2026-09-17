@@ -73,6 +73,8 @@ public class BookingServiceImpl implements BookingService {
 
         rejectOverlappingBooking(workspace.getId(), request.startDatetime(), request.endDatetime());
 
+        DurationType calculatedDurationType = determineDurationType(request.startDatetime(), request.endDatetime());
+
         log.info("The request for booking is: "+request);
         Booking booking = Booking.builder()
                 .user(user)
@@ -81,12 +83,12 @@ public class BookingServiceImpl implements BookingService {
                 .bookingRef(generateBookingRef())
                 .startDatetime(request.startDatetime())
                 .endDatetime(request.endDatetime())
-                .durationType(request.durationType())
+                .durationType(calculatedDurationType)
                 .status(BookingStatus.PENDING)
                 .numAttendees(request.numAttendees() == null ? 1 : request.numAttendees())
                 .purpose(request.purpose())
                 .internalNotes(request.internalNotes())
-                .basePrice(calculateBasePrice(workspace, request.durationType(), request.startDatetime(), request.endDatetime()))
+                .basePrice(calculateBasePrice(workspace, calculatedDurationType, request.startDatetime(), request.endDatetime()))
                 .discountAmount(BigDecimal.ZERO)
                 .taxAmount(BigDecimal.ZERO)
                 .currency(workspace.getCurrency() == null ? "EGP" : workspace.getCurrency())
@@ -258,6 +260,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void refreshPrice(Booking booking) {
+        booking.setDurationType(determineDurationType(booking.getStartDatetime(), booking.getEndDatetime()));
         BigDecimal basePrice = calculateBasePrice(
                 booking.getWorkspace(),
                 booking.getDurationType(),
@@ -268,6 +271,18 @@ public class BookingServiceImpl implements BookingService {
         booking.setDiscountAmount(booking.getDiscountAmount() == null ? BigDecimal.ZERO : booking.getDiscountAmount());
         booking.setTaxAmount(booking.getTaxAmount() == null ? BigDecimal.ZERO : booking.getTaxAmount());
         booking.setTotalAmount(basePrice.subtract(booking.getDiscountAmount()).add(booking.getTaxAmount()));
+    }
+
+    private DurationType determineDurationType(LocalDateTime start, LocalDateTime end) {
+        long hours = ceilHours(start, end);
+        if (hours < 4) {
+            return DurationType.HOURLY;
+        }
+        long days = ceilUnits(Duration.between(start, end).toMinutes(), 24L * 60L);
+        if (days < 10) {
+            return DurationType.DAILY;
+        }
+        return DurationType.MONTHLY;
     }
 
     private BigDecimal calculateBasePrice(Workspace workspace, DurationType durationType, LocalDateTime start, LocalDateTime end) {
@@ -326,7 +341,24 @@ public class BookingServiceImpl implements BookingService {
         if (cancelWholeBooking) {
             return booking.getTotalAmount();
         }
-        return calculateBasePrice(booking.getWorkspace(), booking.getDurationType(), cancelStart, cancelEnd);
+
+        BigDecimal originalBasePrice = booking.getBasePrice();
+        BigDecimal newBasePrice = BigDecimal.ZERO;
+        
+        LocalDateTime originalStart = booking.getStartDatetime();
+        LocalDateTime originalEnd = booking.getEndDatetime();
+        
+        if (cancelStart.equals(originalStart)) {
+            newBasePrice = newBasePrice.add(calculateBasePrice(booking.getWorkspace(), determineDurationType(cancelEnd, originalEnd), cancelEnd, originalEnd));
+        } else if (cancelEnd.equals(originalEnd)) {
+            newBasePrice = newBasePrice.add(calculateBasePrice(booking.getWorkspace(), determineDurationType(originalStart, cancelStart), originalStart, cancelStart));
+        } else {
+            newBasePrice = newBasePrice.add(calculateBasePrice(booking.getWorkspace(), determineDurationType(originalStart, cancelStart), originalStart, cancelStart));
+            newBasePrice = newBasePrice.add(calculateBasePrice(booking.getWorkspace(), determineDurationType(cancelEnd, originalEnd), cancelEnd, originalEnd));
+        }
+        
+        BigDecimal refund = originalBasePrice.subtract(newBasePrice);
+        return refund.compareTo(BigDecimal.ZERO) > 0 ? refund : BigDecimal.ZERO;
     }
 
     private void createRefundRequestIfEligible(Booking booking, BigDecimal refundAmount, String reason) {
