@@ -22,6 +22,7 @@ public record PaymentResponse(
         BigDecimal amount,
         BigDecimal refundAmount,
         String screenshotFilename,
+        String screenshotBase64,
         String reasonOfReject,
         LocalDateTime adminDecisionAt,
         LocalDateTime createdOn

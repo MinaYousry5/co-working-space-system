@@ -13,10 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.workspace.booking.repository.WorkspaceRepository;
+
 @Service
 @RequiredArgsConstructor
 public class WorkspaceTypeServiceImpl implements WorkspaceTypeService {
     private final WorkspaceTypeRepository repository;
+    private final WorkspaceRepository workspaceRepository;
 
     @Override
     @Transactional
@@ -44,7 +47,13 @@ public class WorkspaceTypeServiceImpl implements WorkspaceTypeService {
         entity.setIconName(request.getIconName());
         entity.setIsActive(request.getIsActive());
 
-        return mapToResponse(repository.save(entity));
+        WorkspaceType updated = repository.save(entity);
+        
+        if (com.workspace.booking.common.enums.YesNo.N.equals(request.getIsActive())) {
+            workspaceRepository.updateIsAvailableByWorkspaceTypeId(updated.getId(), com.workspace.booking.common.enums.YesNo.N);
+        }
+
+        return mapToResponse(updated);
     }
 
     @Override

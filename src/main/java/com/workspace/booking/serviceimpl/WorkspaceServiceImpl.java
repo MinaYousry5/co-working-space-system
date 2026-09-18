@@ -47,6 +47,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         byte[] blobData = req.floorPlanBlob() != null
                 ? Base64.getDecoder().decode(req.floorPlanBlob())
                 : null;
+                
+        YesNo isAvailable = req.isAvailable() != null ? req.isAvailable() : YesNo.Y;
+        if (YesNo.N.equals(type.getIsActive())) {
+            isAvailable = YesNo.N;
+        }
 
         // 2. Build the entity and SET the relations
         Workspace workspace = Workspace.builder()
@@ -62,7 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .roomNumber(req.roomNumber())
                 .minBookingHrs(req.minBookingHrs())
                 .maxBookingHrs(req.maxBookingHrs())
-                .isAvailable(YesNo.Y)
+                .isAvailable(isAvailable)
                 .isFeatured(YesNo.N)
                 // IMPORTANT: Assign the objects here
                 .workspaceType(type)
@@ -83,11 +88,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public WorkspaceResponse update(Long id, WorkspaceCreateRequest req) {
         Workspace ws = workspaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Workspace not found"));
+                
+        WorkspaceType type = workspaceTypeRepository.findById(req.workspaceTypeId())
+                .orElseThrow(() -> new RuntimeException("Workspace Type not found"));
 
         ws.setWorkspaceName(req.workspaceName());
         ws.setCapacity(req.capacity());
         ws.setPriceHourly(req.priceHourly());
-        // ... update other fields ...
+
+        YesNo isAvailable = req.isAvailable() != null ? req.isAvailable() : ws.getIsAvailable();
+        if (YesNo.N.equals(type.getIsActive())) {
+            isAvailable = YesNo.N;
+        }
+        ws.setIsAvailable(isAvailable);
+        ws.setWorkspaceType(type);
 
         return mapper.toResponse(workspaceRepository.save(ws));
     }

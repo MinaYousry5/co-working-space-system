@@ -45,6 +45,9 @@ public record WorkspaceCreateRequest(
                 example = "EGP", allowableValues = {"EGP", "USD", "EUR", "GBP"})
         @NotBlank(message = "Currency is required")
         String currency,
+        
+        @Schema(description = "Is workspace available", example = "YES")
+        com.workspace.booking.common.enums.YesNo isAvailable,
 
         @Schema(description = "ID of the workspace type/category",
                 example = "3", required = true)

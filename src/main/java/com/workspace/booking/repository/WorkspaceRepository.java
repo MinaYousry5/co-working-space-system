@@ -20,6 +20,10 @@ public interface WorkspaceRepository extends JpaRepository<Workspace, Long> {
     @Query("select w from Workspace w where w.id = :workspaceId")
     Optional<Workspace> lockById(@Param("workspaceId") Long workspaceId);
 
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("update Workspace w set w.isAvailable = :isAvailable where w.workspaceType.id = :typeId")
+    void updateIsAvailableByWorkspaceTypeId(@Param("typeId") Long typeId, @Param("isAvailable") YesNo isAvailable);
+
     @Query("""
             select w from Workspace w
             where w.isAvailable = :isAvailable
