@@ -11,5 +11,5 @@ public interface ContactMessageRepository extends JpaRepository<ContactMessage, 
 
     Page<ContactMessage> findByStatusOrderByCreatedOnDesc(ContactStatus status, Pageable pageable);
 
-    Page<ContactMessage> findAllByOrderByCreatedOnDesc(Pageable pageable);
+    Page<ContactMessage> findAllByOrderByStatusAscCreatedOnDesc(Pageable pageable);
 }

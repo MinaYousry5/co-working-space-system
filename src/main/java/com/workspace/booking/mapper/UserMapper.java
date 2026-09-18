@@ -36,6 +36,7 @@ public class UserMapper {
                 .lastName(user.getLastName())
                 .fullName(user.getFirstName() + " " + user.getLastName()) // Combine names
                 .email(user.getEmail())
+                .phone(user.getPhone())
                 .companyName(user.getCompanyName())
                 .jobTitle(user.getJobTitle())
                 .avatarBase64(base64Image) 

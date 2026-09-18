@@ -59,7 +59,7 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     @Transactional(readOnly = true)
     public Page<ContactMessageResponse> getAll(Pageable pageable) {
         log.info("Admin fetching all contact messages page={} size={}", pageable.getPageNumber(), pageable.getPageSize());
-        return contactMessageRepository.findAllByOrderByCreatedOnDesc(pageable).map(mapper::toResponse);
+        return contactMessageRepository.findAllByOrderByStatusAscCreatedOnDesc(pageable).map(mapper::toResponse);
     }
 
     @Override

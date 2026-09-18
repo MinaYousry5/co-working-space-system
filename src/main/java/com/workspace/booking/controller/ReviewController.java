@@ -39,7 +39,7 @@ public class ReviewController {
     @PostMapping
     @Operation(summary = "Create review")
     public ResponseEntity<ApiResponse<ReviewResponse>> create(@Valid @RequestBody ReviewCreateRequest request) {
-        log.info("Received create review request userId={} bookingId={}", request.userId(), request.bookingId());
+        log.info("Received create review request userId={}", request.userId());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reviewService.create(request)));
     }
 

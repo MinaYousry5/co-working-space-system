@@ -9,12 +9,6 @@ public record ReviewCreateRequest(
         @NotNull(message = "User ID is required")
         Long userId,
 
-        @NotNull(message = "Workspace ID is required")
-        Long workspaceId,
-
-        @NotNull(message = "Booking ID is required")
-        Long bookingId,
-
         @NotNull(message = "Rating is required")
         @Min(value = 1, message = "Rating must be at least 1")
         @Max(value = 5, message = "Rating must be at most 5")

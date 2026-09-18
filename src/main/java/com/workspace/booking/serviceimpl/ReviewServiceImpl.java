@@ -47,26 +47,34 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewResponse create(ReviewCreateRequest request) {
-        log.info("Creating review userId={} workspaceId={} bookingId={} rating={}",
-                request.userId(), request.workspaceId(), request.bookingId(), request.rating());
+        log.info("Creating review userId={} rating={}", request.userId(), request.rating());
 
-        Booking booking = bookingRepository.findById(request.bookingId())
-                .orElseThrow(() -> {
-                    log.warn("Review create failed because bookingId={} was not found", request.bookingId());
-                    return new CustomException(ErrorCode.BOOKING_NOT_FOUND);
-                });
+        if (reviewRepository.existsByUserId(request.userId())) {
+            log.warn("Review create rejected because userId={} already has a review", request.userId());
+            throw new InvalidBookingTimeException("User has already made a review");
+        }
 
-        validateReviewEligibility(booking, request.userId(), request.workspaceId());
+        List<Booking> userBookings = bookingRepository.findByUserId(request.userId());
+        Booking eligibleBooking = null;
 
-        if (reviewRepository.existsByBookingId(request.bookingId())) {
-            log.warn("Review create rejected because bookingId={} already has a review", request.bookingId());
-            throw new InvalidBookingTimeException("This booking already has a review");
+        for (Booking b : userBookings) {
+            if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.COMPLETED) {
+                if (b.getEndDatetime() != null && LocalDateTime.now().isAfter(b.getEndDatetime().plusHours(24))) {
+                    eligibleBooking = b;
+                    break;
+                }
+            }
+        }
+
+        if (eligibleBooking == null) {
+            log.warn("Review create rejected because no eligible booking found for userId={}", request.userId());
+            throw new InvalidBookingTimeException("User does not have an eligible confirmed booking to review");
         }
 
         Review review = Review.builder()
-                .booking(booking)
-                .user(booking.getUser())
-                .workspace(booking.getWorkspace())
+                .booking(eligibleBooking)
+                .user(eligibleBooking.getUser())
+                .workspace(eligibleBooking.getWorkspace())
                 .rating(request.rating().doubleValue())
                 .title(request.title())
                 .body(request.body())
@@ -75,7 +83,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
 
         Review saved = reviewRepository.save(review);
-        log.info("Review created successfully id={} bookingId={}", saved.getId(), booking.getId());
+        log.info("Review created successfully id={} userId={}", saved.getId(), request.userId());
         return toResponse(saved);
     }
 
@@ -180,23 +188,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toResponse(review, savedReply);
     }
 
-    private void validateReviewEligibility(Booking booking, Long userId, Long workspaceId) {
-        if (!booking.getUser().getId().equals(userId)) {
-            throw new InvalidBookingTimeException("Booking does not belong to this user");
-        }
-        if (!booking.getWorkspace().getId().equals(workspaceId)) {
-            throw new InvalidBookingTimeException("Booking does not belong to this workspace");
-        }
-        if (booking.getEndDatetime() == null || booking.getEndDatetime().isAfter(LocalDateTime.now())) {
-            throw new InvalidBookingTimeException("Booking must be ended before writing a review");
-        }
-//        if (booking.getCheckedInAt() == null) {
-//            throw new InvalidBookingTimeException("User must check in to the workspace before writing a review");
-//        }
-        if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.NO_SHOW) {
-            throw new InvalidBookingTimeException("Cancelled or no-show bookings cannot be reviewed");
-        }
-    }
+
 
     private ReviewResponse toResponse(Review review) {
         ReviewReply reply = reviewReplyRepository.findByReviewId(review.getId()).orElse(null);
