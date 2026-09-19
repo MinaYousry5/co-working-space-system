@@ -76,20 +76,7 @@ public record WorkspaceCreateRequest(
 
         @Schema(description = "Cancellation window in hours (free cancellation before this time)",
                 example = "24", minimum = "0", defaultValue = "24")
-        Integer cancellationHrs,
-
-        @Schema(description = "Base64 encoded floor plan image",
-                example = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-                format = "base64")
-        String floorPlanBlob,
-
-        @Schema(description = "MIME type of the floor plan image",
-                example = "image/png", allowableValues = {"image/png", "image/jpeg", "image/jpg", "application/pdf"})
-        String floorPlanMimeType,
-
-        @Schema(description = "Original filename of the uploaded floor plan",
-                example = "floor_plan_level_2.png")
-        String floorPlanFilename
+        Integer cancellationHrs
 
 ) {}
 

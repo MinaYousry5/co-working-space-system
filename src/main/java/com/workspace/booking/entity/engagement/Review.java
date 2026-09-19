@@ -34,15 +34,6 @@ public class Review extends BaseEntity {
     @Column(name = "BODY")
     private String body;
 
-    @Column(name = "CLEANLINESS_RATING")
-    private Double cleanlinessRating;
-
-    @Column(name = "FACILITIES_RATING")
-    private Double facilitiesRating;
-
-    @Column(name = "VALUE_RATING")
-    private Double valueRating;
-
     @Column(name = "IS_VERIFIED", nullable = false)
     private Integer isVerified;
 

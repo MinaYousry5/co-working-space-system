@@ -74,29 +74,4 @@ public class WorkspaceController {
     }
 
 }
-//
-//    private final WorkspaceService workspaceService;
-//
-//    @PostMapping("/search")
-//    public ResponseEntity<ApiResponse<Page<WorkspaceResponse>>> search(@Valid @RequestBody WorkspaceSearchRequest request) {
-//        return ResponseEntity.ok(ApiResponse.success(workspaceService.search(request)));
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ApiResponse<WorkspaceResponse>> findById(@PathVariable Long id) {
-//        return ResponseEntity.ok(ApiResponse.success(workspaceService.findById(id)));
-//    }
-//
-//    @GetMapping("/{id}/availability")
-//    public ResponseEntity<ApiResponse<WorkspaceAvailabilityResponse>> availability(
-//            @PathVariable Long id,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
-//        return ResponseEntity.ok(ApiResponse.success(workspaceService.availability(id, start, end)));
-//    }
-//
-//    @GetMapping("/locations/{locationId}/resources")
-//    public ResponseEntity<ApiResponse<List<ResourceResponse>>> resources(@PathVariable Long locationId) {
-//        return ResponseEntity.ok(ApiResponse.success(workspaceService.resources(locationId)));
-//    }
-//}
+

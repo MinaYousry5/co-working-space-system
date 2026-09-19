@@ -70,22 +70,6 @@ public class Booking extends BaseEntity {
     @Column(name = "CURRENCY", nullable = false)
     private String currency;
 
-//    @Lob
-//    @Column(name = "QR_CODE_BLOB")
-//    private byte[] qrCodeBlob;
-//
-//    @Column(name = "QR_CODE_MIME_TYPE")
-//    private String qrCodeMimeType;
-//
-//    @Column(name = "PIN_CODE")
-//    private String pinCode;
-
-    @Column(name = "CHECKED_IN_AT")
-    private LocalDateTime checkedInAt;
-
-    @Column(name = "CHECKED_OUT_AT")
-    private LocalDateTime checkedOutAt;
-
     @Column(name = "CANCELLED_AT")
     private LocalDateTime cancelledAt;
 

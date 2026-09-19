@@ -43,10 +43,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         WorkspaceType type = workspaceTypeRepository.findById(req.workspaceTypeId())
                 .orElseThrow(() -> new RuntimeException("Workspace Type not found"));
 
-
-        byte[] blobData = req.floorPlanBlob() != null
-                ? Base64.getDecoder().decode(req.floorPlanBlob())
-                : null;
                 
         YesNo isAvailable = req.isAvailable() != null ? req.isAvailable() : YesNo.Y;
         if (YesNo.N.equals(type.getIsActive())) {
@@ -73,9 +69,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .workspaceType(type)
                 .advanceNotice(req.advanceNotice())
                 .cancellationHrs(req.cancellationHrs())
-                .floorPlanBlob(blobData)
-                .floorPlanMimeType(req.floorPlanMimeType())
-                .floorPlanFilename(req.floorPlanFilename())
                 .build();
 
         // 3. Save

@@ -45,8 +45,4 @@ public class Workspace extends BaseEntity {
     private Integer advanceNotice;
     private Integer cancellationHrs;
 
-    @Lob
-    private byte[] floorPlanBlob;
-    private String floorPlanMimeType;
-    private String floorPlanFilename;
 }
