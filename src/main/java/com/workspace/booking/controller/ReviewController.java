@@ -6,7 +6,6 @@ import com.workspace.booking.dto.review.ReviewRatingCountResponse;
 import com.workspace.booking.dto.review.ReviewReplyRequest;
 import com.workspace.booking.dto.review.ReviewResponse;
 import com.workspace.booking.dto.review.ReviewSummaryResponse;
-import com.workspace.booking.dto.review.ReviewUpdateRequest;
 import com.workspace.booking.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -43,13 +42,6 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(reviewService.create(request)));
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update review by user")
-    public ResponseEntity<ApiResponse<ReviewResponse>> updateByUser(
-            @PathVariable Long id,
-            @Valid @RequestBody ReviewUpdateRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(reviewService.updateByUser(id, request)));
-    }
 
     @GetMapping
     @Operation(summary = "Get all reviews")

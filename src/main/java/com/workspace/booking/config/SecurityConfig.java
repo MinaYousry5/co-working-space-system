@@ -92,7 +92,7 @@ public class SecurityConfig {
                                 .bearerFormat("JWT")))
                 .servers(List.of(
                         new Server().url("https://brunette-jargon-entitle.ngrok-free.dev").description("Ngrok Server"),
-                        new Server().url("http://localhost:8081").description("Local")
+                        new Server().url("http://localhost:8082").description("Local")
                 ));
     }
 }

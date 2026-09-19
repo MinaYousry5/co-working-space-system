@@ -9,7 +9,6 @@ import com.workspace.booking.dto.review.ReviewRatingCountResponse;
 import com.workspace.booking.dto.review.ReviewReplyRequest;
 import com.workspace.booking.dto.review.ReviewResponse;
 import com.workspace.booking.dto.review.ReviewSummaryResponse;
-import com.workspace.booking.dto.review.ReviewUpdateRequest;
 import com.workspace.booking.entity.booking.Booking;
 import com.workspace.booking.entity.engagement.Review;
 import com.workspace.booking.entity.engagement.ReviewReply;
@@ -87,25 +86,6 @@ public class ReviewServiceImpl implements ReviewService {
         return toResponse(saved);
     }
 
-    @Override
-    @Transactional
-    public ReviewResponse updateByUser(Long reviewId, ReviewUpdateRequest request) {
-        log.info("Updating review id={} by userId={}", reviewId, request.userId());
-
-        Review review = reviewRepository.findByIdAndUserId(reviewId, request.userId())
-                .orElseThrow(() -> {
-                    log.warn("Review update failed because reviewId={} was not found for userId={}", reviewId, request.userId());
-                    return new CustomException(ErrorCode.REVIEW_NOT_FOUND);
-                });
-
-        review.setRating(request.rating().doubleValue());
-        review.setTitle(request.title());
-        review.setBody(request.body());
-
-        Review saved = reviewRepository.save(review);
-        log.info("Review updated successfully id={} userId={}", saved.getId(), request.userId());
-        return toResponse(saved);
-    }
 
     @Override
     @Transactional(readOnly = true)

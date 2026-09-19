@@ -81,7 +81,6 @@ public class AuthServiceImpl implements AuthService {
 
         accessTokenRepository.save(tokenEntity);
 
-        String resetLink = ipPort + "auth/reset-password?token=" + rawToken;
         String forgetPasswordLink= "https://misa7a.seamrmoussa.workers.dev/forgot-password";
         String Mesa7a = "https://misa7a.seamrmoussa.workers.dev/forgot-password?token="+ rawToken;
         String localServer = "http://localhost:4200/forgot-password?token="+rawToken;
