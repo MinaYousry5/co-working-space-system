@@ -20,8 +20,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByStatusAndCreatedOnBefore(BookingStatus status, LocalDateTime createdOn);
 
-    Page<Booking> findAllByOrderByStartDatetimeDesc(Pageable pageable);
-
     @Query("""
             select b from Booking b
             where b.workspace.id = :workspaceId
@@ -35,17 +33,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                           @Param("endDatetime") LocalDateTime endDatetime,
                                           @Param("statuses") Collection<BookingStatus> statuses);
 
-    @Query("""
-            select coalesce(sum(b.numAttendees), 0) from Booking b
-            where b.workspace.id = :workspaceId
-              and b.status in :statuses
-              and b.startDatetime < :endDatetime
-              and b.endDatetime > :startDatetime
-            """)
-    Long countReservedAttendees(@Param("workspaceId") Long workspaceId,
-                                @Param("startDatetime") LocalDateTime startDatetime,
-                                @Param("endDatetime") LocalDateTime endDatetime,
-                                @Param("statuses") Collection<BookingStatus> statuses);
-
-    long countByStatusIn(Collection<BookingStatus> statuses);
 }

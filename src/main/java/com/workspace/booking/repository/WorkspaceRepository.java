@@ -41,14 +41,4 @@ public interface WorkspaceRepository extends JpaRepository<Workspace, Long> {
                                             @Param("blockingStatuses") Collection<BookingStatus> blockingStatuses,
                                             @Param("isAvailable") YesNo isAvailable);
 
-//    @Query("""
-//            select w from Workspace w
-//            where (:typeId is null or w.workspaceType.id = :typeId)
-//              and (:minCapacity is null or w.capacity >= :minCapacity)
-//              and w.isAvailable = 1
-//            """)
-//    Page<Workspace> search(@Param("typeId") Long typeId,
-//                           @Param("minCapacity") Integer minCapacity,
-//                           Pageable pageable);
-
 }

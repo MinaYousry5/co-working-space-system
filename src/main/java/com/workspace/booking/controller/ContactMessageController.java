@@ -41,14 +41,14 @@ public class ContactMessageController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @Operation(summary = "Admin get all contact-us messages")
     public ResponseEntity<ApiResponse<Page<ContactMessageResponse>>> getAll(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.success(contactMessageService.getAll(pageable)));
     }
 
     @GetMapping("/users/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @Operation(summary = "Admin get contact-us messages by user ID")
     public ResponseEntity<ApiResponse<Page<ContactMessageResponse>>> getByUserId(
             @PathVariable Long userId,
@@ -57,7 +57,7 @@ public class ContactMessageController {
     }
 
     @GetMapping("/status")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @Operation(summary = "Admin get contact-us messages by status")
     public ResponseEntity<ApiResponse<Page<ContactMessageResponse>>> getByStatus(
             @RequestParam ContactStatus status,
@@ -66,7 +66,7 @@ public class ContactMessageController {
     }
 
     @PatchMapping("/{id}/close")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @Operation(summary = "Admin close contact-us message")
     public ResponseEntity<ApiResponse<ContactMessageResponse>> close(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(contactMessageService.close(id)));

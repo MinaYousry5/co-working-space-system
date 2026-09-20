@@ -70,7 +70,7 @@ public class ReviewController {
     }
 
     @PostMapping("/{id}/response")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @Operation(summary = "Admin response to review")
     public ResponseEntity<ApiResponse<ReviewResponse>> respond(
             @PathVariable Long id,

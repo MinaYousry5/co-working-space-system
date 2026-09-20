@@ -50,13 +50,13 @@ public class PaymentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<Page<PaymentResponse>>> getAll(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.success(paymentService.getAll(pageable)));
     }
 
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<Page<PaymentResponse>>> getByStatus(
             @PathVariable PaymentStatus status,
             @ParameterObject Pageable pageable
@@ -65,7 +65,7 @@ public class PaymentController {
     }
 
     @GetMapping("/transaction-type/{transactionType}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<Page<PaymentResponse>>> getByTransactionType(
             @PathVariable PaymentTransactionType transactionType,
             @ParameterObject Pageable pageable
@@ -74,7 +74,7 @@ public class PaymentController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<PaymentResponse>> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody PaymentStatusUpdateRequest request

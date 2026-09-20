@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface ReviewReplyRepository extends JpaRepository<ReviewReply, Long> {
     Optional<ReviewReply> findByReviewId(Long reviewId);
 
-    boolean existsByReviewId(Long reviewId);
 }

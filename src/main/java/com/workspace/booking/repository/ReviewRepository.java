@@ -10,15 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    boolean existsByBookingId(Long bookingId);
 
     boolean existsByUserId(Long userId);
 
     Page<Review> findAllByOrderByCreatedOnDesc(Pageable pageable);
 
     Page<Review> findByRatingOrderByCreatedOnDesc(Double rating, Pageable pageable);
-
-    Optional<Review> findByIdAndUserId(Long id, Long userId);
 
     @Query("select coalesce(avg(r.rating), 0), count(r.id) from Review r")
     Object[] getAverageRatingAndTotal();

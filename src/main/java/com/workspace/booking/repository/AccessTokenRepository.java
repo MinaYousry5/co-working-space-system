@@ -16,7 +16,4 @@ public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> 
             Integer revoked
     );
 
-    List<AccessToken> findByUserIdAndTokenType(Long userId, TokenType tokenType);
-
-    Optional<AccessToken> findByTokenHash(String token);
 }
